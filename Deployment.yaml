@@ -58,3 +58,13 @@ spec:
   selector:
     app: app
   type: NodePort
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: app-pdb
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: app
