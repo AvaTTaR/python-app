@@ -38,6 +38,13 @@ spec:
             port: 8080
           initialDelaySeconds: 10
           periodSeconds: 5
+        resources:
+          limits:
+            memory: "200Mi"
+            cpu: "100m"
+          requests:
+            memory: "150Mi"
+            cpu: "10m"
       restartPolicy: Always
       schedulerName: default-scheduler
       terminationGracePeriodSeconds: 30
