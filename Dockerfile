@@ -9,4 +9,3 @@ RUN  addgroup -S appgroup && adduser -S appuser -G appgroup && \
 
 USER appuser
 CMD ["python3", "-m", "demo"]
-EXPOSE 8080
