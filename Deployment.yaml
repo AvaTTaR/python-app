@@ -1,0 +1,60 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  labels:
+    app: app
+  name: app
+  namespace: default
+spec: 
+  replicas: 3
+  selector:
+    matchLabels:
+      app: app
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: app
+    spec:
+      containers:
+      - image: avattar/wa3:v2noexp
+        imagePullPolicy: IfNotPresent
+        name: wa3
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 20
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 5
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      terminationGracePeriodSeconds: 30
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: app
+  name: app
+  namespace: default
+spec:
+  ports:
+  - nodePort: 31111
+    port: 8080
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app: app
+  type: NodePort
