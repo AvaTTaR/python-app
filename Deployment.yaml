@@ -1,8 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  annotations:
-    deployment.kubernetes.io/revision: "1"
   labels:
     app: app
   name: app
@@ -24,7 +22,6 @@ spec:
     spec:
       containers:
       - image: avattar/wa3:v2noexp
-        imagePullPolicy: IfNotPresent
         name: wa3
         livenessProbe:
           httpGet:
@@ -46,7 +43,6 @@ spec:
             memory: "150Mi"
             cpu: "10m"
       restartPolicy: Always
-      schedulerName: default-scheduler
       terminationGracePeriodSeconds: 30
 ---
 apiVersion: v1
