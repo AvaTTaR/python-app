@@ -1,6 +1,7 @@
 # Lab: containerizing and deploying application into K8S cluster 
 ## 1. Build docker image with Python  application
 **[Check out Dockerfile](https://github.com/AvaTTaR/python-app/blob/main/Dockerfile "Check out Dockerfile")**
+
 Build docker image with command `docker build --tag=avattar/wa3:v3 . `
 
 `docker login` and push it to DockerHub using `docker push avattar/wa3:v3` 
