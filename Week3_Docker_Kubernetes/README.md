@@ -2,6 +2,8 @@
 ## 2. Build docker image with Python  application
 **[Check out Dockerfile](https://github.com/AvaTTaR/python-app/blob/main/Dockerfile "Check out Dockerfile")**
 
+I had chosen to let app folder be own by root to minify Docker-image layers and cause an application only need rights to execute it, not to modify, it will help to avoid unexpected corruption of app-files if someone will get access to appuser
+
 Build docker image with command `docker build --tag=avattar/wa3:v3 . `
 
 `docker login` and push it to DockerHub using `docker push avattar/wa3:v3` 
