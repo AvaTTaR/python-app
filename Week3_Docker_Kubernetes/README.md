@@ -46,7 +46,7 @@ minikube start --nodes 2
 ## The deployment requires 3 replicas, “RollingUpdate” strategy. 
 #### Define the liveness and readiness probes to /health endpoint and 8080 port, resources(requests/limits) 
 
-All is in **[Deployment.yaml](https://github.com/AvaTTaR/python-app/blob/main/Deployment.yaml "Check out Deployment.yaml")** requests/limits set to follow burstable strategy. 
+All is in **[Deployment.yaml](https://github.com/AvaTTaR/python-app/blob/main/Deployment.yaml "Check out Deployment.yaml")** requests/limits are configured to follow burstable strategy. 
 
 #### Emulate the “RollingUpdate” strategy by updating docker image. Provide screenshots. 
 
