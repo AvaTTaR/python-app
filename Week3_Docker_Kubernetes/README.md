@@ -1,5 +1,5 @@
 # Lab: containerizing and deploying application into K8S cluster 
-## 1. Build docker image with Python  application
+## 2. Build docker image with Python  application
 **[Check out Dockerfile](https://github.com/AvaTTaR/python-app/blob/main/Dockerfile "Check out Dockerfile")**
 
 Build docker image with command `docker build --tag=avattar/wa3:v3 . `
@@ -10,7 +10,7 @@ Build docker image with command `docker build --tag=avattar/wa3:v3 . `
 
 ---
 
-## 2. Setup K8S cluster using Minikube(1 master + 1 worker node is enough)
+## 3. Setup K8S cluster using Minikube(1 master + 1 worker node is enough)
 
 Install minikube from binary
 
@@ -33,7 +33,7 @@ Create and start cluster with 2 nodes:
 minikube start --nodes 2
 ```
 
-## 3. Deploy the application into the K8S cluster
+## 4. Deploy the application into the K8S cluster
 
 **[Deployment.yaml](https://github.com/AvaTTaR/python-app/blob/main/Deployment.yaml "Check out Deployment.yaml")**
 
