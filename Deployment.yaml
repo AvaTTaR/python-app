@@ -4,7 +4,7 @@ metadata:
   labels:
     app: app
   name: app
-  namespace: default
+  namespace: application
 spec: 
   replicas: 3
   selector:
