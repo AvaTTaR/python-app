@@ -4,10 +4,10 @@ metadata:
   labels:
     app: app
   name: app
-  namespace: default
+  namespace: application
 spec:
   ports:
-  - port: 8080
+  - port: 9090
     protocol: TCP
     targetPort: 8080
   selector:
