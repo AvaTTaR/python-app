@@ -1,7 +1,6 @@
 pipeline {
     agent {
         kubernetes {
-        //cloud 'kubernetes'
         defaultContainer 'kaniko'
         yaml '''
         kind: Pod
@@ -13,6 +12,10 @@ pipeline {
             - sleep
             args:
             - 99d
+            volumeMounts:
+            - name: kube-conf-map
+              mountPath: /root/.kube/config
+              subPath: config
           - name: kaniko
             image: gcr.io/kaniko-project/executor:v1.6.0-debug
             imagePullPolicy: Always
@@ -24,6 +27,9 @@ pipeline {
               - name: jenkins-docker-cfg
                 mountPath: /kaniko/.docker
           volumes:
+          - name: kube-conf-map
+            configMap:
+              name: kube-conf-map
           - name: jenkins-docker-cfg
             projected:
               sources:
@@ -36,13 +42,18 @@ pipeline {
         }
     }
     stages {
-        stage('test') {
+        stage('Build image'){
+            steps {
+                git url: 'https://github.com/AvaTTaR/python-app.git', branch: 'main'
+                sh '/kaniko/executor --context "`pwd`" --destination avattar/fp-app:${BUILD_NUMBER}'
+            }
+        }
+        stage('Deploy') {
             steps {
                 container('kubectl') {
-                        withCredentials([file(credentialsId: 'mykubeconfig', variable: 'KUBECONFIG')]) {
-                        git url: 'https://github.com/AvaTTaR/python-app.git', branch: 'main'
-                        sh 'kubectl apply -f Deployment.yaml'
-                    }
+                    git url: 'https://github.com/AvaTTaR/python-app.git', branch: 'main'
+                    sh 'sed -i "s/<TAG>/${BUILD_NUMBER}/" Deployment.yaml'
+                    sh 'kubectl apply -f Deployment.yaml'
                 }
             }
         }
