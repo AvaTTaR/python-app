@@ -44,14 +44,16 @@ pipeline {
     stages {
         stage('Build image'){
             steps {
-                git url: 'https://github.com/AvaTTaR/python-app.git', branch: 'main'
+                //git url: 'https://github.com/AvaTTaR/python-app.git', branch: 'main'
+                checkout scm
                 sh '/kaniko/executor --context "`pwd`" --destination avattar/fp-app:${BUILD_NUMBER}'
             }
         }
         stage('Deploy') {
             steps {
                 container('kubectl') {
-                    git url: 'https://github.com/AvaTTaR/python-app.git', branch: 'main'
+                    //git url: 'https://github.com/AvaTTaR/python-app.git', branch: 'main'
+                    checkout scm
                     sh 'sed -i "s/<TAG>/${BUILD_NUMBER}/" Deployment.yaml'
                     sh 'kubectl apply -f Deployment.yaml'
                 }
