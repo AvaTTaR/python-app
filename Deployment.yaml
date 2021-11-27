@@ -53,10 +53,11 @@ metadata:
   name: app
   namespace: application
 spec:
+  type: ClusterIP
   ports:
-  - port: 9090
+  - port: 9095
     protocol: TCP
     targetPort: 8080
   selector:
     app: app
-  type: NodePort
+
