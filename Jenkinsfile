@@ -61,19 +61,19 @@ pipeline {
                         echo "There is active application running. Starting canary update"
                         sed -i "s/<TAG>/${BUILD_NUMBER}/" canary-deployment.yaml
                         kubectl apply -f canary-deployment.yaml -f Service.yaml
-                        sleep 60
+                        sleep 600
 
 
                         if [[ $(kubectl -n application get pods | grep app-canary-deployment | wc -l | awk '{print $1}') != $(kubectl -n application get pods | grep app-canary-deployment | grep Running | wc -l | awk '{print $1}') ]]
                         then
                           echo "Something went wrong, rollback to previously version"
-                          kubectl -n application delete deployment.apps/canary-deployment
+                          kubectl -n application delete deployment app-canary-deployment
                         else
                           echo "New version looks fine, finishing deploy"
                           sed -i "s/<TAG>/${BUILD_NUMBER}/" Deployment.yaml
                           echo "    version: \\"${BUILD_NUMBER}\\"" >> Service.yaml
                           kubectl apply -f Deployment.yaml -f Service.yaml
-                          kubectl -n application delete deployment.apps/canary-deployment
+                          kubectl -n application delete deployment app-canary-deployment
                         fi
 
 
