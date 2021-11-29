@@ -71,7 +71,7 @@ pipeline {
                         else
                           echo "New version looks fine, finishing deploy"
                           sed -i "s/<TAG>/${BUILD_NUMBER}/" Deployment.yaml
-                          echo "    version: \"${BUILD_NUMBER}\"" >> Service.yaml
+                          echo "    version: \\"${BUILD_NUMBER}\\"" >> Service.yaml
                           kubectl apply -f Deployment.yaml -f Service.yaml
                           kubectl -n application delete deployment.apps/canary-deployment
                         fi
@@ -81,7 +81,7 @@ pipeline {
                     else
                       echo "There is no active application instances, deploing"
                       sed -i "s/<TAG>/${BUILD_NUMBER}/" Deployment.yaml
-                      echo "    version: \"${BUILD_NUMBER}\"" >> Service.yaml
+                      echo "    version: \\"${BUILD_NUMBER}\\"" >> Service.yaml
                       kubectl apply -f Deployment.yaml -f Service.yaml
                    fi
                   '''
