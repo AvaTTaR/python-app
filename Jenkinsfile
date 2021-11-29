@@ -56,7 +56,7 @@ pipeline {
                     //git url: 'https://github.com/AvaTTaR/python-app.git', branch: 'main'
                     checkout scm
                     sh '''
-                    if [[ $(kubectl -n application get deploy | grep app | wc -l |  sed 's/[^0-9]//g' ) > 0 ]]
+                    if [[ $(kubectl -n application get deploy) ]]
                     then
                         echo "There is active application running. Starting canary update"
                         sed -i "s/<TAG>/${BUILD_NUMBER}/" canary-deployment.yaml
@@ -78,7 +78,7 @@ pipeline {
 
 
                         
-                  else
+                    else
                       echo "There is no active application instances, deploing"
                       sed -i "s/<TAG>/${BUILD_NUMBER}/" Deployment.yaml
                       echo '"version: "${BUILD_NUMBER}"' > Service.yaml
