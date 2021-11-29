@@ -60,20 +60,34 @@ pipeline {
                     then
                         echo "There is active application running. Starting canary update"
                         sed -i "s/<TAG>/${BUILD_NUMBER}/" canary-deployment.yaml
-                        kubectl apply -f canary-deployment.yaml -f Service.yaml
-                        sleep 60
+                        sed -i "s/<WEIGHT>/25/" canary-deployment.yaml
+                        kubectl apply -f canary-deployment.yaml
+                        sleep 30
 
-
-                        if [[ $(kubectl -n application get pods | grep app-canary-deployment | wc -l | awk '{print $1}') != $(kubectl -n application get pods | grep app-canary-deployment | grep Running | wc -l | awk '{print $1}') ]]
+                        if [[ $(kubectl  -n application-canary get pods | grep app- | wc -l | awk '{print $1}') != $(kubectl  -n application-canary get pods | grep app- | grep Running | wc -l | awk '{print $1}') ]]
                         then
                           echo "Something went wrong, rollback to previously version"
-                          kubectl -n application delete deployment app-canary-deployment
+                          kubectl -n application-canary delete deployment app
+                          kubectl -n application-canary delete ingress app-svc
                         else
-                          echo "New version looks fine, finishing deploy"
-                          sed -i "s/<TAG>/${BUILD_NUMBER}/" Deployment.yaml
-                          echo "    version: \\"${BUILD_NUMBER}\\"" >> Service.yaml
-                          kubectl apply -f Deployment.yaml -f Service.yaml
-                          kubectl -n application delete deployment app-canary-deployment
+                          echo "Looks fine so far, increasing weight of canary up to 50"
+                          sed -i "s/canary-weight: \\"25\\"/canary-weight: \\"25\\"/" canary-deployment.yaml
+                          echo "DEBAG========================================================"
+                          cat canary-deployment.yaml
+                          kubectl apply -f canary-deployment.yaml
+                          sleep 30
+                          if if [[ $(kubectl  -n application-canary get pods | grep app- | wc -l | awk '{print $1}') != $(kubectl  -n application-canary get pods | grep app- | grep Running | wc -l | awk '{print $1}') ]]
+                          then
+                             echo "Something went wrong, rollback to previously version"
+                             kubectl -n application-canary delete deployment app
+                             kubectl -n application-canary delete ingress app-svc
+                          else
+                              echo "New Build works well. Deploing."
+                              sed -i "s/<TAG>/${BUILD_NUMBER}/" Deployment.yaml
+                              kubectl apply -f Deployment.yaml
+                              kubectl -n application-canary delete deployment app
+                              kubectl -n application-canary delete ingress app-svc
+                          fi
                         fi
 
 
@@ -81,8 +95,7 @@ pipeline {
                     else
                       echo "There is no active application instances, deploing"
                       sed -i "s/<TAG>/${BUILD_NUMBER}/" Deployment.yaml
-                      echo "    version: \\"${BUILD_NUMBER}\\"" >> Service.yaml
-                      kubectl apply -f Deployment.yaml -f Service.yaml
+                      kubectl apply -f Deployment.yaml
                    fi
                   '''
                 }
