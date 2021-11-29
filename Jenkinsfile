@@ -61,7 +61,7 @@ pipeline {
                         echo "There is active application running. Starting canary update"
                         sed -i "s/<TAG>/${BUILD_NUMBER}/" canary-deployment.yaml
                         kubectl apply -f canary-deployment.yaml -f Service.yaml
-                        sleep 600
+                        sleep 60
 
 
                         if [[ $(kubectl -n application get pods | grep app-canary-deployment | wc -l | awk '{print $1}') != $(kubectl -n application get pods | grep app-canary-deployment | grep Running | wc -l | awk '{print $1}') ]]
