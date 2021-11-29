@@ -19,10 +19,10 @@ spec:
     metadata:
       labels:
         app: app
-        version: "<TAG>"
+        version: "2"
     spec:
       containers:
-      - image: avattar/fp-app:<TAG>
+      - image: avattar/fp-app:2
         name: wa3
         livenessProbe:
           httpGet:

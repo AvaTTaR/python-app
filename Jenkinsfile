@@ -62,27 +62,29 @@ pipeline {
                         sed -i "s/<TAG>/${BUILD_NUMBER}/" canary-deployment.yaml
                         kubectl apply -f canary-deployment.yaml -f Service.yaml
                         sleep 60
-                        for st in $(kubectl -n application get pods | grep app-canary-deployment | awk '{print $3}')
-                        do
-                          if [[ "$st" != "Running" ]]
+
+
+                        if [[ $(kubectl -n application get pods | grep app-canary-deployment | wc -l | awk '{print $1}') != $(kubectl -n application get pods | grep app-canary-deployment | grep Running | wc -l | awk '{print $1}') ]]
                         then
-                         echo "Something went wrong, rollback to previously version"
-                         kubectl -n application delete deployment.apps/canary-deployment
+                          echo "Something went wrong, rollback to previously version"
+                          kubectl -n application delete deployment.apps/canary-deployment
                         else
                           echo "New version looks fine, finishing deploy"
                           sed -i "s/<TAG>/${BUILD_NUMBER}/" Deployment.yaml
                           echo '"version: "${BUILD_NUMBER}"' > Service.yaml
                           kubectl apply -f Deployment.yaml -f Service.yaml
                           kubectl -n application delete deployment.apps/canary-deployment
-                        done
+                        fi
+
+
                         
-                    else
-                        echo "There is no active application instances, deploing"
-                        sed -i "s/<TAG>/${BUILD_NUMBER}/" Deployment.yaml
-                        echo '"version: "${BUILD_NUMBER}"' > Service.yaml
-                        kubectl apply -f Deployment.yaml -f Service.yaml
-                    fi
-                    '''
+                  else
+                      echo "There is no active application instances, deploing"
+                      sed -i "s/<TAG>/${BUILD_NUMBER}/" Deployment.yaml
+                      echo '"version: "${BUILD_NUMBER}"' > Service.yaml
+                       kubectl apply -f Deployment.yaml -f Service.yaml
+                   fi
+                  '''
                 }
             }
         }
