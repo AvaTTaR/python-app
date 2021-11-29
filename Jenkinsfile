@@ -76,7 +76,7 @@ pipeline {
                           cat canary-deployment.yaml
                           kubectl apply -f canary-deployment.yaml
                           sleep 30
-                          if if [[ $(kubectl  -n application-canary get pods | grep app- | wc -l | awk '{print $1}') != $(kubectl  -n application-canary get pods | grep app- | grep Running | wc -l | awk '{print $1}') ]]
+                          if [[ $(kubectl  -n application-canary get pods | grep app- | wc -l | awk '{print $1}') != $(kubectl  -n application-canary get pods | grep app- | grep Running | wc -l | awk '{print $1}') ]]
                           then
                              echo "Something went wrong, rollback to previously version"
                              kubectl -n application-canary delete deployment app
