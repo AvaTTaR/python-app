@@ -56,7 +56,7 @@ pipeline {
                     //git url: 'https://github.com/AvaTTaR/python-app.git', branch: 'main'
                     checkout scm
                     sh '''
-                    if [[ $(kubectl -n application get deploy) ]]
+                    if [[ "$(kubectl -n application get deploy)" ]]
                     then
                         echo "There is active application running. Starting canary update"
                         sed -i "s/<TAG>/${BUILD_NUMBER}/" canary-deployment.yaml
