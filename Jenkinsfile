@@ -55,13 +55,13 @@ pipeline {
                 container('kubectl') {
                     //git url: 'https://github.com/AvaTTaR/python-app.git', branch: 'main'
                     checkout scm
-                    '''
+                    sh '''
                     if [[ $(kubectl -n application get deploy | grep app | wc -l |  sed 's/[^0-9]//g' ) > 0 ]]
                     then
                         echo "There is active application running. Starting canary update"
                         sed -i "s/<TAG>/${BUILD_NUMBER}/" canary-deployment.yaml
                         kubectl apply -f canary-deployment.yaml -f Service.yaml
-                        sleep 30
+                        sleep 60
                         for st in $(kubectl -n application get pods | grep app-canary-deployment | awk '{print $3}')
                         do
                           if [[ "$st" != "Running" ]]
