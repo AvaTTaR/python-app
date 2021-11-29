@@ -15,7 +15,7 @@ async def health(request: web.Request):
 
 async def app_info(request: web.Request):
     return web.Response(
-        body="Hostname: {}. Version: {}".format(
+        body="Hostname: {}. Version: {} . Build <TAG>".format(
             HOSTNAME,
             VERSION,
         )
