@@ -26,7 +26,7 @@ spec:
         app: app
     spec:
       containers:
-      - image: avattar/fp-app:{TAG}
+      - image: avattar/fp-app:<TAG>
         name: wa3
         livenessProbe:
           httpGet:
