@@ -44,7 +44,6 @@ pipeline {
     stages {
         stage('Build image'){
             steps {
-                //git url: 'https://github.com/AvaTTaR/python-app.git', branch: 'main'
                 checkout scm
                 sh 'sed -i \"s/<TAG>/${BUILD_NUMBER} /\" application/demo/views.py'
                 sh '/kaniko/executor --context "`pwd`" --destination avattar/fp-app:${BUILD_NUMBER}'
@@ -53,7 +52,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 container('kubectl') {
-                    //git url: 'https://github.com/AvaTTaR/python-app.git', branch: 'main'
                     checkout scm
                     sh '''
                     if [[ "$(kubectl -n application get deploy)" ]]
@@ -62,7 +60,7 @@ pipeline {
                         sed -i "s/<TAG>/${BUILD_NUMBER}/" canary-deployment.yaml
                         sed -i "s/<WEIGHT>/25/" canary-deployment.yaml
                         kubectl apply -f canary-deployment.yaml
-                        sleep 30
+                        sleep 60
 
                         if [[ $(kubectl  -n application-canary get pods | grep app- | wc -l | awk '{print $1}') != $(kubectl  -n application-canary get pods | grep app- | grep Running | wc -l | awk '{print $1}') ]]
                         then
@@ -71,11 +69,9 @@ pipeline {
                           kubectl -n application-canary delete ingress app-svc
                         else
                           echo "Looks fine so far, increasing weight of canary up to 50"
-                          sed -i "s/canary-weight: \\"25\\"/canary-weight: \\"25\\"/" canary-deployment.yaml
-                          echo "DEBAG========================================================"
-                          cat canary-deployment.yaml
+                          sed -i "s/canary-weight: \\"25\\"/canary-weight: \\"50\\"/" canary-deployment.yaml
                           kubectl apply -f canary-deployment.yaml
-                          sleep 30
+                          sleep 60
                           if [[ $(kubectl  -n application-canary get pods | grep app- | wc -l | awk '{print $1}') != $(kubectl  -n application-canary get pods | grep app- | grep Running | wc -l | awk '{print $1}') ]]
                           then
                              echo "Something went wrong, rollback to previously version"
